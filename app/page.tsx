@@ -21,6 +21,14 @@ export default function HomePage() {
   const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const getInitials = (name: string) =>
+    name
+      .split(\" \")
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((part) => part[0]?.toUpperCase())
+      .join(\"\");
+
   const companies = manualProvider.listCompanies();
   const filteredCompanies = useMemo(() => {
     if (!query.trim()) return companies;
@@ -111,10 +119,17 @@ export default function HomePage() {
               onClick={() => handleSelectOpenCompany(company)}
               className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-brand-600"
             >
-              <p className="font-semibold">{company.name}</p>
-              <p className="text-xs text-slate-500">Org.nr: {company.orgNumber}</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-brand-100 text-sm font-semibold text-brand-700">
+                  {getInitials(company.name)}
+                </div>
+                <div>
+                  <p className="font-semibold">{company.name}</p>
+                  <p className="text-xs text-slate-500">Org.nr: {company.orgNumber}</p>
+                </div>
+              </div>
               {company.industryDescription ? (
-                <p className="text-xs text-slate-500">{company.industryDescription}</p>
+                <p className="mt-2 text-xs text-slate-500">{company.industryDescription}</p>
               ) : null}
             </button>
           ))}
@@ -139,8 +154,15 @@ export default function HomePage() {
               onClick={() => handleSelectDemo(company.id)}
               className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-brand-600"
             >
-              <p className="font-semibold">{company.name}</p>
-              <p className="text-xs text-slate-500">Org.nr: {company.orgNumber}</p>
+              <div className="flex items-center gap-3">
+                <div className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-100 text-sm font-semibold text-slate-600">
+                  {getInitials(company.name)}
+                </div>
+                <div>
+                  <p className="font-semibold">{company.name}</p>
+                  <p className="text-xs text-slate-500">Org.nr: {company.orgNumber}</p>
+                </div>
+              </div>
             </button>
           ))}
         </div>
