@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import { manualProvider } from "../lib/data-provider";
+import { mapToManualInput, searchOpenCompanies } from "../lib/open-data-provider";
 import { Input } from "./components/ui/input";
 import { Button } from "./components/ui/button";
 import { Card } from "./components/ui/card";
@@ -11,8 +12,13 @@ import { useAppStore } from "./store";
 
 export default function HomePage() {
   const router = useRouter();
-  const { state, setSelectedCompanyId } = useAppStore();
+  const { state, setSelectedCompanyId, setManualInput } = useAppStore();
   const [query, setQuery] = useState("");
+  const [openQuery, setOpenQuery] = useState("");
+  const [openResults, setOpenResults] = useState<
+    { orgNumber: string; name: string; industryDescription?: string }[]
+  >([]);
+  const [isSearching, setIsSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const companies = manualProvider.listCompanies();
@@ -27,7 +33,7 @@ export default function HomePage() {
   }, [companies, query]);
 
   const handleContinue = () => {
-    if (!state.selectedCompanyId) {
+    if (!state.selectedCompanyId && !state.manualInput) {
       setError("Velg et selskap for å fortsette.");
       return;
     }
@@ -38,6 +44,38 @@ export default function HomePage() {
     const demo = manualProvider.getManualInputForCompany(id);
     if (!demo) return;
     setSelectedCompanyId(id);
+    setManualInput(null);
+    setError(null);
+  };
+
+  const handleSearchOpenData = async () => {
+    if (!openQuery.trim()) {
+      setError("Skriv inn et selskapsnavn eller orgnr.");
+      return;
+    }
+    setIsSearching(true);
+    setError(null);
+    try {
+      const results = await searchOpenCompanies(openQuery.trim());
+      setOpenResults(results);
+      if (results.length === 0) {
+        setError("Fant ingen treff i åpne kilder.");
+      }
+    } catch (err) {
+      console.error(err);
+      setError("Kunne ikke hente data fra åpne kilder.");
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSelectOpenCompany = (company: {
+    orgNumber: string;
+    name: string;
+    industryDescription?: string;
+  }) => {
+    setSelectedCompanyId(null);
+    setManualInput(mapToManualInput(company));
     setError(null);
   };
 
@@ -51,6 +89,37 @@ export default function HomePage() {
           at du må svare på spørsmål.
         </p>
       </header>
+
+      <Card className="space-y-3">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold">Søk i åpne kilder</h2>
+          <span className="text-xs text-slate-500">Enhetsregisteret</span>
+        </div>
+        <Input
+          value={openQuery}
+          onChange={(event) => setOpenQuery(event.target.value)}
+          placeholder="Søk på selskapsnavn eller orgnr"
+        />
+        <Button onClick={handleSearchOpenData} disabled={isSearching}>
+          {isSearching ? "Søker..." : "Søk"}
+        </Button>
+        <div className="grid gap-3">
+          {openResults.map((company) => (
+            <button
+              key={company.orgNumber}
+              type="button"
+              onClick={() => handleSelectOpenCompany(company)}
+              className="rounded-2xl border border-slate-200 bg-white p-4 text-left shadow-sm hover:border-brand-600"
+            >
+              <p className="font-semibold">{company.name}</p>
+              <p className="text-xs text-slate-500">Org.nr: {company.orgNumber}</p>
+              {company.industryDescription ? (
+                <p className="text-xs text-slate-500">{company.industryDescription}</p>
+              ) : null}
+            </button>
+          ))}
+        </div>
+      </Card>
 
       <section className="space-y-3">
         <div className="flex items-center justify-between">

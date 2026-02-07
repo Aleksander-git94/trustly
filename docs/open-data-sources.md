@@ -11,6 +11,8 @@ Nedenfor er åpne datakilder vi kan koble til for å hente selskapsdata uten at 
 
 **Hvorfor nyttig:** gir grunnstruktur, status og noen grunnleggende økonomisignaler som kan mappes til risikomodellen.
 
+**Status i MVP:** søk er koblet til Enhetsregisteret via `app/api/companies/search`.
+
 ### SSB (Statistisk sentralbyrå)
 - **Bransjestatistikk**: makrotrender per næring (f.eks. lønnsomhet, konkursrate, sysselsetting).
 - **Arbeidsmarked**: sysselsetting og regionale trender.

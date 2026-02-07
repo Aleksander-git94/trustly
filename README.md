@@ -22,6 +22,7 @@ npm run test
 - **DataProvider**: `ManualProvider` i `lib/data-provider.ts` er et grensesnitt som kan byttes ut med integrasjoner senere.
 - **Risikomotor**: `lib/risk-engine.ts` bruker regelbasert scoring og genererer en rapport (`Report`).
 - **Demo-data**: `lib/demo-data.ts` inneholder minst tre selskaper og ferdig utfylt `ManualInput`.
+- **Åpne data**: `app/api/companies/*` henter selskapsdata fra Brønnøysundregistrene.
 
 ## Deploy til Vercel
 

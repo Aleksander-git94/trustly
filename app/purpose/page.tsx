@@ -30,6 +30,11 @@ export default function PurposePage() {
   const { state, setManualInput } = useAppStore();
 
   const handleSelect = (purpose: Purpose) => {
+    if (state.manualInput) {
+      setManualInput({ ...state.manualInput, purpose });
+      router.push("/results");
+      return;
+    }
     if (!state.selectedCompanyId) {
       router.push("/");
       return;
