@@ -29,3 +29,7 @@ npm run test
 2. Opprett nytt prosjekt i Vercel og koble til repoet.
 3. Velg `Next.js` som framework. Vercel oppdager dette automatisk.
 4. Klikk **Deploy**.
+
+## Åpne datakilder (forslag)
+
+Se `docs/open-data-sources.md` for en oversikt over åpne og tilgjengelige datakilder vi kan koble på senere.
