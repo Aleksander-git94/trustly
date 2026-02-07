@@ -8,6 +8,7 @@ import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { Badge } from "../components/ui/badge";
 import { Toggle } from "../components/ui/toggle";
+import { ScoreRing } from "../components/ui/score-ring";
 import { useAppStore } from "../store";
 
 const levelColor: Record<string, string> = {
@@ -55,8 +56,20 @@ export default function ResultsPage() {
   return (
     <main className="main-container space-y-6">
       <header className="space-y-2">
-        <Badge>Steg 3 av 3</Badge>
-        <h1 className="text-2xl font-semibold">Resultat for {report.companyName}</h1>
+        <Badge>Steg 2 av 2</Badge>
+        <div className="flex items-center gap-3">
+          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-brand-100 text-lg font-semibold text-brand-700">
+            {report.companyName
+              .split(\" \")
+              .filter(Boolean)
+              .slice(0, 2)
+              .map((part) => part[0]?.toUpperCase())
+              .join(\"\")}\n+          </div>
+          <div>
+            <h1 className="text-2xl font-semibold">Resultat for {report.companyName}</h1>
+            <p className="text-xs text-slate-500">Basert på åpne selskapsdata</p>
+          </div>
+        </div>
         <p className="text-sm text-slate-600">
           Totalvurdering: {report.overallScore}/100 ({report.overallLevel})
         </p>
@@ -68,25 +81,36 @@ export default function ResultsPage() {
           onPressedChange={setSimpleMode}
           label="Forklar enkelt"
         />
-        <Button variant="ghost" onClick={() => router.push("/wizard")}
-        >Tilbake til spørsmål</Button>
+        <Button variant="ghost" onClick={() => router.push("/purpose")}
+        >Endre formål</Button>
       </div>
 
       <section className="grid gap-4">
         {report.cards.map((card) => (
           <Card key={card.id} className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs text-slate-500">{card.score}/100</p>
+            <div className="flex items-center justify-between gap-3">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs text-slate-500">
+                  <span>
+                    {card.id === \"economy\" && \"💰\"}
+                    {card.id === \"job_security\" && \"🧑‍💼\"}
+                    {card.id === \"governance\" && \"🧭\"}
+                    {card.id === \"legal_ops\" && \"⚖️\"}
+                  </span>
+                  <span>{card.score}/100</span>
+                </div>
                 <h2 className="text-lg font-semibold">{card.title}</h2>
               </div>
-              <span
-                className={`rounded-full px-3 py-1 text-xs font-semibold ${
-                  levelColor[card.level]
-                }`}
-              >
-                {card.level.toUpperCase()}
-              </span>
+              <div className="flex items-center gap-2">
+                <ScoreRing score={card.score} level={card.level} />
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                    levelColor[card.level]
+                  }`}
+                >
+                  {card.level.toUpperCase()}
+                </span>
+              </div>
             </div>
             <p className="text-sm text-slate-600">
               {simpleMode ? simplifyText(card.summary) : card.summary}

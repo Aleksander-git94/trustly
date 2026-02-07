@@ -5,6 +5,7 @@ import { Button } from "../components/ui/button";
 import { Card } from "../components/ui/card";
 import { useAppStore } from "../store";
 import { Purpose } from "../../lib/types";
+import { manualProvider } from "../../lib/data-provider";
 
 const purposes: { id: Purpose; title: string; description: string }[] = [
   {
@@ -29,18 +30,32 @@ export default function PurposePage() {
   const { state, setManualInput } = useAppStore();
 
   const handleSelect = (purpose: Purpose) => {
-    if (!state.manualInput) return;
-    setManualInput({ ...state.manualInput, purpose });
-    router.push("/wizard");
+    if (state.manualInput) {
+      setManualInput({ ...state.manualInput, purpose });
+      router.push("/results");
+      return;
+    }
+    if (!state.selectedCompanyId) {
+      router.push("/");
+      return;
+    }
+    const demo = manualProvider.getManualInputForCompany(state.selectedCompanyId);
+    if (!demo) {
+      router.push("/");
+      return;
+    }
+    setManualInput({ ...demo, purpose });
+    router.push("/results");
   };
 
   return (
     <main className="main-container space-y-6">
       <header className="space-y-2">
-        <p className="text-xs text-slate-500">Steg 1 av 3</p>
+        <p className="text-xs text-slate-500">Steg 2 av 2</p>
         <h1 className="text-2xl font-semibold">Hva er formålet ditt?</h1>
         <p className="text-sm text-slate-600">
-          Vi bruker formålet til å tilpasse språk og anbefalinger.
+          Vi vurderer samme selskapsdata, men forklarer resultatet ulikt basert på
+          situasjonen din.
         </p>
       </header>
 
