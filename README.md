@@ -22,6 +22,7 @@ npm run test
 - **DataProvider**: `ManualProvider` i `lib/data-provider.ts` er et grensesnitt som kan byttes ut med integrasjoner senere.
 - **Risikomotor**: `lib/risk-engine.ts` bruker regelbasert scoring og genererer en rapport (`Report`).
 - **Demo-data**: `lib/demo-data.ts` inneholder minst tre selskaper og ferdig utfylt `ManualInput`.
+- **Åpne data**: `app/api/companies/*` henter selskapsdata fra Brønnøysundregistrene.
 
 ## Deploy til Vercel
 
@@ -30,3 +31,6 @@ npm run test
 3. Velg `Next.js` som framework. Vercel oppdager dette automatisk.
 4. Klikk **Deploy**.
 
+## Åpne datakilder (forslag)
+
+Se `docs/open-data-sources.md` for en oversikt over åpne og tilgjengelige datakilder vi kan koble på senere.
